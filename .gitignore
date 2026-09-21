@@ -1,0 +1,68 @@
+## Visual Studio / MSBuild artefacts
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+## Build output
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Ll]og/
+[Ll]ogs/
+
+## NuGet
+packages/
+*.nupkg
+*.snupkg
+project.lock.json
+project.fragment.lock.json
+artifacts/
+nuget.dgspec.json
+*.nuget.targets
+
+## Publish output
+publish/
+PublishScripts/
+
+## Test results
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+TestResult.xml
+
+## ReSharper
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user
+
+## Windows
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+## macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+## Secrets & environment
+*.env
+.env
+.env.*
+appsettings.*.json
+!appsettings.Development.json
+ConnectionStrings.json
+*.pfx
+*.p12
+*.key
+*.pem
+
+## Bob workspace files (do not push tool config)
+.bob/
