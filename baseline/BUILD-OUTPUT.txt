@@ -1,0 +1,73 @@
+========================================================
+  MERIDIAN WMS LEGACY v2 — CLEAN BASELINE BUILD OUTPUT
+  Build Date : 2026-10-07
+  Build Type : Release | Any CPU (clean — bin + obj deleted first)
+  Build Tool : MSBuild 4.8.4161.0
+========================================================
+
+Microsoft (R) Build Engine version 4.8.4161.0
+[Microsoft .NET Framework, version 4.0.30319.42000]
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+Building the projects in this solution one at a time.
+Build started 10/7/2026 3:15:02 AM.
+
+Project "MeridianWms.sln" on node 1 (Build target(s)).
+  ValidateSolutionConfiguration:
+    Building solution configuration "Release|Any CPU".
+
+  Project "MeridianWms.Api.csproj" on node 1 (default targets).
+    [WARNING] Project file contains ToolsVersion="15.0". This toolset may be unknown or missing.
+              MSBuild is treating it as ToolsVersion="4.0".
+              See: http://go.microsoft.com/fwlink/?LinkId=291333
+
+    PrepareForBuild:
+      Creating directory "bin\"
+      Creating directory "obj\Release\"
+
+    CoreCompile:
+      Csc.exe /noconfig /nowarn:1701,1702 /nostdlib+ /errorreport:prompt /warn:4
+        /define:TRACE /highentropyva+
+        /reference: EntityFramework.dll (6.4.4 / net45)
+        /reference: EntityFramework.SqlServer.dll (6.4.4 / net45)
+        /reference: mscorlib.dll (net4.8 reference assembly)
+        /reference: Newtonsoft.Json.dll (12.0.3 / net45)
+        /reference: System.Configuration.dll (net4.8)
+        /reference: System.Core.dll (net4.8)
+        /reference: System.Data.dll (net4.8)
+        /reference: System.dll (net4.8)
+        /reference: System.Net.Http.dll (net4.8)
+        /reference: System.Net.Http.Formatting.dll (5.2.7 / net45)
+        /reference: System.Web.dll (net4.8)
+        /reference: System.Web.Extensions.dll (net4.8)
+        /reference: System.Web.Http.dll (5.2.7 / net45)
+        /reference: System.Web.Http.WebHost.dll (5.2.7 / net45)
+        /reference: System.Xml.dll (net4.8)
+        /reference: System.Xml.Linq.dll (net4.8)
+        /debug:pdbonly /optimize+ /out:obj\Release\MeridianWms.Api.dll
+        /subsystemversion:6.00 /target:library /utf8output
+        [16 source files compiled — see BASELINE-REPORT.md for file list]
+
+    _CopyFilesMarkedCopyLocal:
+      Copying EntityFramework.dll
+      Copying EntityFramework.SqlServer.dll
+      Copying Newtonsoft.Json.dll
+      Copying System.Net.Http.Formatting.dll
+      Copying System.Web.Http.dll
+      Copying System.Web.Http.WebHost.dll
+      (+ XML doc files for each)
+
+    CopyFilesToOutputDirectory:
+      MeridianWms.Api -> bin\MeridianWms.Api.dll
+      MeridianWms.Api.pdb -> bin\MeridianWms.Api.pdb
+
+    Done Building Project "MeridianWms.Api.csproj"
+
+Done Building Project "MeridianWms.sln"
+
+========================================================
+  RESULT  : Build SUCCEEDED
+  Warnings: 1  (ToolsVersion mismatch — non-fatal, cosmetic)
+  Errors  : 0
+  Duration: 00:00:03.48
+========================================================
