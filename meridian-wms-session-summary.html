@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Meridian WMS — Codebase Analysis Session Summary</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, "Segoe UI", system-ui, sans-serif;
+      font-size: 14px;
+      line-height: 1.7;
+      background: #0f1117;
+      color: #d1d5db;
+    }
+
+    a { color: #60a5fa; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* ── Page shell ── */
+    .page {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 48px 24px 80px;
+    }
+
+    /* ── Header banner ── */
+    .banner {
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      border: 1px solid #334155;
+      border-radius: 8px;
+      padding: 36px 40px;
+      margin-bottom: 48px;
+    }
+    .banner-eyebrow {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #3b82f6;
+      margin-bottom: 10px;
+    }
+    .banner h1 {
+      font-size: 28px;
+      font-weight: 700;
+      color: #f1f5f9;
+      line-height: 1.25;
+      margin-bottom: 12px;
+    }
+    .banner p {
+      color: #94a3b8;
+      font-size: 14px;
+      max-width: 680px;
+    }
+    .meta-row {
+      display: flex;
+      gap: 24px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+    .meta-chip {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 4px;
+      padding: 4px 10px;
+      font-size: 12px;
+      color: #94a3b8;
+    }
+    .meta-chip span { color: #cbd5e1; font-weight: 600; }
+
+    /* ── Sections ── */
+    .section {
+      margin-bottom: 56px;
+    }
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #1e293b;
+    }
+    .section-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: #1e3a5f;
+      border: 1px solid #3b82f6;
+      color: #60a5fa;
+      font-size: 12px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .section-header h2 {
+      font-size: 19px;
+      font-weight: 700;
+      color: #f1f5f9;
+    }
+
+    /* ── Prose ── */
+    .prose p { margin-bottom: 14px; color: #cbd5e1; }
+    .prose p:last-child { margin-bottom: 0; }
+    .prose strong { color: #f1f5f9; font-weight: 600; }
+
+    /* ── Feature grid ── */
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+      gap: 16px;
+      margin-top: 20px;
+    }
+    .feature-card {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 6px;
+      padding: 16px 18px;
+    }
+    .feature-card .fc-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #60a5fa;
+      margin-bottom: 6px;
+    }
+    .feature-card p {
+      font-size: 12.5px;
+      color: #94a3b8;
+      line-height: 1.55;
+    }
+
+    /* ── Tables ── */
+    .table-wrap { overflow-x: auto; margin-top: 16px; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    thead tr { background: #1e293b; }
+    thead th {
+      text-align: left;
+      padding: 10px 14px;
+      color: #94a3b8;
+      font-weight: 600;
+      font-size: 11.5px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      border-bottom: 1px solid #334155;
+    }
+    tbody tr { border-bottom: 1px solid #1e293b; }
+    tbody tr:hover { background: #161d2a; }
+    tbody td {
+      padding: 9px 14px;
+      color: #cbd5e1;
+      vertical-align: top;
+    }
+    tbody td:first-child { color: #f1f5f9; font-weight: 600; }
+    code.inline {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 3px;
+      padding: 1px 6px;
+      font-family: "SF Mono", "Fira Code", "Consolas", monospace;
+      font-size: 12px;
+      color: #a5b4fc;
+    }
+
+    /* ── Mermaid diagrams ── */
+    .diagram-box {
+      background: #111827;
+      border: 1px solid #1e293b;
+      border-radius: 8px;
+      padding: 28px 20px;
+      margin-top: 16px;
+      overflow-x: auto;
+    }
+    .diagram-box .mermaid {
+      display: flex;
+      justify-content: center;
+    }
+
+    /* ── Lifecycle stage cards ── */
+    .lifecycle-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 0;
+      margin-top: 20px;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .lc-card {
+      padding: 18px 16px;
+      border-right: 1px solid #334155;
+      background: #111827;
+      position: relative;
+    }
+    .lc-card:last-child { border-right: none; }
+    .lc-card .lc-status {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 3px;
+      margin-bottom: 8px;
+    }
+    .status-pending  { background: #422006; color: #fb923c; }
+    .status-allocated { background: #1e3a5f; color: #60a5fa; }
+    .status-shipped  { background: #052e16; color: #4ade80; }
+    .status-cancelled { background: #2d1b1b; color: #f87171; }
+    .lc-card .lc-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #f1f5f9;
+      margin-bottom: 6px;
+    }
+    .lc-card p { font-size: 12px; color: #94a3b8; line-height: 1.5; }
+    .lc-card .lc-trigger {
+      font-size: 11px;
+      color: #64748b;
+      margin-top: 8px;
+      font-style: italic;
+    }
+
+    /* ── Guard / error list ── */
+    .guard-list {
+      list-style: none;
+      margin-top: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .guard-list li {
+      background: #1a1a2e;
+      border-left: 3px solid #f87171;
+      border-radius: 0 4px 4px 0;
+      padding: 10px 14px;
+      font-size: 13px;
+      color: #fca5a5;
+    }
+    .guard-list li strong {
+      display: block;
+      color: #f87171;
+      font-size: 12px;
+      margin-bottom: 2px;
+    }
+
+    /* ── API endpoint list ── */
+    .endpoint-group { margin-bottom: 20px; }
+    .endpoint-group-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #64748b;
+      margin-bottom: 8px;
+    }
+    .endpoint {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      padding: 7px 12px;
+      border-radius: 4px;
+      background: #111827;
+      border: 1px solid #1e293b;
+      margin-bottom: 4px;
+      font-family: "SF Mono", "Fira Code", "Consolas", monospace;
+      font-size: 12.5px;
+    }
+    .method {
+      font-weight: 700;
+      font-size: 11px;
+      min-width: 38px;
+      text-align: center;
+      padding: 2px 6px;
+      border-radius: 3px;
+    }
+    .get  { background: #052e16; color: #4ade80; }
+    .post { background: #1e3a5f; color: #60a5fa; }
+    .endpoint-path { color: #e2e8f0; }
+
+    /* ── Tech stack table helpers ── */
+    .tag {
+      display: inline-block;
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 3px;
+      padding: 2px 7px;
+      font-size: 11px;
+      color: #94a3b8;
+      font-family: "SF Mono", "Fira Code", monospace;
+    }
+
+    /* ── Known issues ── */
+    .issue-list {
+      list-style: none;
+      margin-top: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .issue-list li {
+      display: flex;
+      gap: 10px;
+      padding: 10px 14px;
+      background: #1e1a00;
+      border-left: 3px solid #f59e0b;
+      border-radius: 0 4px 4px 0;
+      font-size: 13px;
+      color: #fde68a;
+    }
+    .issue-list li .issue-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: #f59e0b;
+      min-width: 110px;
+      flex-shrink: 0;
+    }
+    .issue-list li .issue-desc { color: #d1d5db; }
+
+    /* ── Footer ── */
+    .footer {
+      margin-top: 64px;
+      padding-top: 20px;
+      border-top: 1px solid #1e293b;
+      text-align: center;
+      font-size: 12px;
+      color: #475569;
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ═══════════════════════ BANNER ═══════════════════════ -->
+  <div class="banner">
+    <div class="banner-eyebrow">Session Summary · Codebase Analysis</div>
+    <h1>Meridian WMS — Legacy .NET Codebase Deep Dive</h1>
+    <p>
+      A complete record of the codebase analysis session for the Meridian Warehouse Management System:
+      application overview, architecture diagram, domain model, order lifecycle, API surface,
+      and all identified legacy issues.
+    </p>
+    <div class="meta-row">
+      <div class="meta-chip">Runtime: <span>.NET Framework 4.8</span></div>
+      <div class="meta-chip">Web Stack: <span>ASP.NET Web API 2</span></div>
+      <div class="meta-chip">Data Access: <span>Entity Framework 6</span></div>
+      <div class="meta-chip">Database: <span>SQL Server</span></div>
+      <div class="meta-chip">Purpose: <span>IBM Bob .NET Modernization Workshop — "before" baseline</span></div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════ 1. APP OVERVIEW ═══════════════════════ -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">1</span>
+      <h2>Application Overview</h2>
+    </div>
+    <div class="prose">
+      <p>
+        <strong>Meridian WMS</strong> is a legacy Warehouse Management System REST API built on .NET Framework 4.8
+        with ASP.NET Web API 2. It serves <strong>logistics and manufacturing distributors</strong> by tracking
+        product stock across physical warehouses and fulfilling customer orders end-to-end.
+      </p>
+      <p>
+        The application is intentionally structured as a 2016-era enterprise .NET app — no dependency injection,
+        synchronous EF6 calls, raw SQL string concatenation, and Windows/IIS-only hosting. It is the
+        <em>"before"</em> codebase used in the IBM Bob .NET Modernization Workshop.
+      </p>
+    </div>
+
+    <div class="feature-grid">
+      <div class="feature-card">
+        <div class="fc-title">Product Catalogue</div>
+        <p>Manage SKUs with name, category, unit weight, unit price, and active/inactive status.</p>
+      </div>
+      <div class="feature-card">
+        <div class="fc-title">Inventory Management</div>
+        <p>Per-warehouse stock with on-hand and reserved quantities, bin locations, and low-stock alerting.</p>
+      </div>
+      <div class="feature-card">
+        <div class="fc-title">Order Fulfilment</div>
+        <p>Create customer orders with line items, allocate stock from the default warehouse, then ship.</p>
+      </div>
+      <div class="feature-card">
+        <div class="fc-title">Shipment Tracking</div>
+        <p>Record outbound shipments with carrier, tracking number, origin warehouse, and total weight.</p>
+      </div>
+      <div class="feature-card">
+        <div class="fc-title">Inventory Search</div>
+        <p>Free-text search over product names via raw ADO.NET against the same SQL Server database.</p>
+      </div>
+      <div class="feature-card">
+        <div class="fc-title">Stock Adjustment</div>
+        <p>Manual delta-based quantity adjustments with a guard against negative on-hand stock.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════ 2. TECH STACK ═══════════════════════ -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">2</span>
+      <h2>Technology Stack</h2>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Concern</th>
+            <th>Technology Used (Legacy)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Runtime</td><td><span class="tag">.NET Framework 4.8</span> — Windows-only</td></tr>
+          <tr><td>Web Stack</td><td><span class="tag">ASP.NET Web API 2</span> · <code class="inline">System.Web</code> · <code class="inline">Global.asax</code></td></tr>
+          <tr><td>Project Format</td><td>Old-style <code class="inline">.csproj</code> + <code class="inline">packages.config</code></td></tr>
+          <tr><td>Data Access</td><td><span class="tag">Entity Framework 6</span> (synchronous) + raw <code class="inline">SqlClient</code></td></tr>
+          <tr><td>Database</td><td><span class="tag">SQL Server</span> via <code class="inline">System.Data.SqlClient</code></td></tr>
+          <tr><td>Configuration</td><td><code class="inline">Web.config</code> — <code class="inline">&lt;connectionStrings&gt;</code> + <code class="inline">&lt;appSettings&gt;</code></td></tr>
+          <tr><td>Dependency Wiring</td><td><code class="inline">new</code> everywhere — no DI framework</td></tr>
+          <tr><td>JSON Serialisation</td><td><span class="tag">Newtonsoft.Json 12</span></td></tr>
+          <tr><td>Hosting</td><td>IIS Express (Windows + Visual Studio)</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════ 3. ARCHITECTURE DIAGRAM ═══════════════════════ -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">3</span>
+      <h2>Software Architecture Diagram</h2>
+    </div>
+    <div class="prose">
+      <p>
+        The application is a single-project, three-layer monolith: an <strong>HTTP / Controller layer</strong>
+        (ASP.NET Web API 2), a <strong>Service layer</strong> (plain C# classes), and a
+        <strong>Data Access layer</strong> (EF6 <code class="inline">WmsDbContext</code> + raw ADO.NET).
+        All layers are wired together with <code class="inline">new</code>; configuration is read
+        ad-hoc via <code class="inline">ConfigurationManager</code>.
+      </p>
+    </div>
+    <div class="diagram-box">
+      <div class="mermaid">
+graph TD
+    subgraph Client["HTTP Client"]
+        C[REST Consumer]
+    end
+
+    subgraph WebLayer["ASP.NET Web API 2 — System.Web / IIS Express"]
+        WC[WebApiConfig\nRoute registration\nJSON-only formatter]
+        GA[Global.asax\nApplication_Start]
+
+        subgraph Controllers
+            PC[ProductsController\nGET /api/products\nPOST /api/products]
+            IC[InventoryController\nGET /api/inventory/warehouse/:code\nGET /api/inventory/low-stock\nGET /api/inventory/search\nPOST /api/inventory/adjust]
+            OC[OrdersController\nGET /api/orders\nPOST /api/orders\nPOST /api/orders/:id/allocate\nPOST /api/orders/:id/ship]
+            SC[ShipmentsController\nGET /api/shipments\nGET /api/shipments/order/:id]
+        end
+    end
+
+    subgraph ServiceLayer["Service Layer"]
+        OS[OrderService\nCreateOrder · Allocate · Ship]
+        IS[InventoryService\nGetForWarehouse · GetLowStock\nSearchByProductName · AdjustQuantity]
+    end
+
+    subgraph DataLayer["Data Access Layer"]
+        DB[WmsDbContext\nEntity Framework 6\nDbContext]
+        ADO[Raw ADO.NET\nSqlConnection / SqlCommand]
+    end
+
+    subgraph Config["Configuration — Web.config"]
+        CS[WmsDb connection string]
+        AS[AppSettings\nDefaultWarehouseCode\nLowStockThreshold]
+    end
+
+    subgraph Storage["SQL Server — MeridianWms DB"]
+        Tables[(Product · Warehouse\nInventoryItem\nOrder · OrderLine\nShipment)]
+    end
+
+    C -->|HTTP Request| WC
+    GA --> WC
+    WC --> PC
+    WC --> IC
+    WC --> OC
+    WC --> SC
+
+    PC -->|direct| DB
+    SC -->|direct| DB
+    OC --> OS
+    IC --> IS
+
+    OS --> DB
+    IS --> DB
+    IS --> ADO
+
+    DB -->|EF6 queries| Tables
+    ADO -->|raw SQL| Tables
+    DB -->|name=WmsDb| CS
+    ADO -->|ConfigurationManager| CS
+    IS -->|ConfigurationManager| AS
+    OS -->|ConfigurationManager| AS
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════ 4. DOMAIN MODEL ═══════════════════════ -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">4</span>
+      <h2>Domain Model</h2>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Entity</th>
+            <th>Key Fields</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Product</td>
+            <td><code class="inline">ProductId</code> · <code class="inline">Sku</code> · <code class="inline">Name</code> · <code class="inline">Category</code> · <code class="inline">UnitWeightKg</code> · <code class="inline">UnitPrice</code> · <code class="inline">IsActive</code></td>
+            <td>A SKU the company sells (pumps, valves, bearings, motors…).</td>
+          </tr>
+          <tr>
+            <td>Warehouse</td>
+            <td><code class="inline">WarehouseId</code> · <code class="inline">Code</code> · <code class="inline">Name</code> · <code class="inline">City</code> · <code class="inline">Country</code></td>
+            <td>A physical site holding stock, identified by a short code e.g. <code class="inline">WH-CENTRAL</code>.</td>
+          </tr>
+          <tr>
+            <td>InventoryItem</td>
+            <td><code class="inline">InventoryItemId</code> · <code class="inline">ProductId</code> · <code class="inline">WarehouseId</code> · <code class="inline">QuantityOnHand</code> · <code class="inline">QuantityReserved</code> · <code class="inline">BinLocation</code></td>
+            <td>Quantity of a Product in a Warehouse. Available = OnHand − Reserved.</td>
+          </tr>
+          <tr>
+            <td>Order</td>
+            <td><code class="inline">OrderId</code> · <code class="inline">OrderNumber</code> · <code class="inline">CustomerName</code> · <code class="inline">DestinationCity/Country</code> · <code class="inline">Status</code> · <code class="inline">CreatedUtc</code></td>
+            <td>A customer order. Status is a free-text magic string: <code class="inline">Pending</code> / <code class="inline">Allocated</code> / <code class="inline">Shipped</code> / <code class="inline">Cancelled</code>.</td>
+          </tr>
+          <tr>
+            <td>OrderLine</td>
+            <td><code class="inline">OrderLineId</code> · <code class="inline">OrderId</code> · <code class="inline">ProductId</code> · <code class="inline">Quantity</code> · <code class="inline">UnitPriceAtOrder</code></td>
+            <td>One line within an order. Unit price is captured at the moment the order is placed.</td>
+          </tr>
+          <tr>
+            <td>Shipment</td>
+            <td><code class="inline">ShipmentId</code> · <code class="inline">OrderId</code> · <code class="inline">Carrier</code> · <code class="inline">TrackingNumber</code> · <code class="inline">FromWarehouseCode</code> · <code class="inline">ShippedUtc</code> · <code class="inline">TotalWeightKg</code></td>
+            <td>An outbound shipment created when an order is shipped.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════ 5. API SURFACE ═══════════════════════ -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">5</span>
+      <h2>API Surface</h2>
+    </div>
+
+    <div class="endpoint-group">
+      <div class="endpoint-group-label">Products — ProductsController → WmsDbContext (direct)</div>
+      <div class="endpoint"><span class="method get">GET</span><span class="endpoint-path">/api/products</span></div>
+      <div class="endpoint"><span class="method get">GET</span><span class="endpoint-path">/api/products/{id}</span></div>
+      <div class="endpoint"><span class="method post">POST</span><span class="endpoint-path">/api/products</span></div>
+    </div>
+
+    <div class="endpoint-group">
+      <div class="endpoint-group-label">Inventory — InventoryController → InventoryService</div>
+      <div class="endpoint"><span class="method get">GET</span><span class="endpoint-path">/api/inventory/warehouse/{code}</span></div>
+      <div class="endpoint"><span class="method get">GET</span><span class="endpoint-path">/api/inventory/low-stock</span></div>
+      <div class="endpoint"><span class="method get">GET</span><span class="endpoint-path">/api/inventory/search?name=pump</span></div>
+      <div class="endpoint"><span class="method post">POST</span><span class="endpoint-path">/api/inventory/adjust?productId=1&amp;warehouseCode=WH-CENTRAL&amp;delta=-5</span></div>
+    </div>
+
+    <div class="endpoint-group">
+      <div class="endpoint-group-label">Orders — OrdersController → OrderService</div>
+      <div class="endpoint"><span class="method get">GET</span><span class="endpoint-path">/api/orders</span></div>
+      <div class="endpoint"><span class="method get">GET</span><span class="endpoint-path">/api/orders/{id}</span></div>
+      <div class="endpoint"><span class="method post">POST</span><span class="endpoint-path">/api/orders</span></div>
+      <div class="endpoint"><span class="method post">POST</span><span class="endpoint-path">/api/orders/{id}/allocate</span></div>
+      <div class="endpoint"><span class="method post">POST</span><span class="endpoint-path">/api/orders/{id}/ship</span></div>
+    </div>
+
+    <div class="endpoint-group">
+      <div class="endpoint-group-label">Shipments — ShipmentsController → WmsDbContext (direct)</div>
+      <div class="endpoint"><span class="method get">GET</span><span class="endpoint-path">/api/shipments</span></div>
+      <div class="endpoint"><span class="method get">GET</span><span class="endpoint-path">/api/shipments/order/{orderId}</span></div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════ 6. ORDER LIFECYCLE ═══════════════════════ -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">6</span>
+      <h2>Order Lifecycle</h2>
+    </div>
+    <div class="prose">
+      <p>
+        Orders progress through up to four statuses, stored as free-text strings on the
+        <code class="inline">Order.Status</code> property. Transitions are enforced by guard conditions
+        inside <code class="inline">OrderService</code>.
+      </p>
+    </div>
+
+    <div class="lifecycle-row">
+      <div class="lc-card">
+        <span class="lc-status status-pending">Pending</span>
+        <div class="lc-title">1 · Creation</div>
+        <p>
+          Order created with validated line items. <code class="inline">UnitPriceAtOrder</code> captured
+          from current product price. <code class="inline">OrderNumber</code> generated as
+          <code class="inline">ORD-yyyyMMddHHmmss</code>.
+        </p>
+        <div class="lc-trigger">Trigger: POST /api/orders</div>
+      </div>
+      <div class="lc-card">
+        <span class="lc-status status-allocated">Allocated</span>
+        <div class="lc-title">2 · Allocation</div>
+        <p>
+          Reads <code class="inline">DefaultWarehouseCode</code> from config. Checks available
+          stock per line. Increments <code class="inline">QuantityReserved</code> for each
+          <code class="inline">InventoryItem</code>.
+        </p>
+        <div class="lc-trigger">Trigger: POST /api/orders/{id}/allocate</div>
+      </div>
+      <div class="lc-card">
+        <span class="lc-status status-shipped">Shipped</span>
+        <div class="lc-title">3 · Shipment</div>
+        <p>
+          Decrements <code class="inline">QuantityOnHand</code> and <code class="inline">QuantityReserved</code>
+          per line. Computes total weight. Inserts a <code class="inline">Shipment</code> record with
+          carrier + tracking number.
+        </p>
+        <div class="lc-trigger">Trigger: POST /api/orders/{id}/ship</div>
+      </div>
+      <div class="lc-card">
+        <span class="lc-status status-cancelled">Cancelled</span>
+        <div class="lc-title">4 · Cancelled</div>
+        <p>
+          Defined as a known status value in the model's comment, but <strong>no endpoint or
+          service method implements cancellation</strong>. This is documented intent, not live code.
+        </p>
+        <div class="lc-trigger">No trigger — not implemented</div>
+      </div>
+    </div>
+
+    <h3 style="font-size:15px;font-weight:700;color:#f1f5f9;margin-top:32px;margin-bottom:10px;">Guard Conditions &amp; Error States</h3>
+    <ul class="guard-list">
+      <li><strong>OrderService.Allocate()</strong> Order status is not "Pending" → throws "Only Pending orders can be allocated."</li>
+      <li><strong>OrderService.Ship()</strong> Order status is not "Allocated" → throws "Only Allocated orders can be shipped."</li>
+      <li><strong>OrderService.Allocate()</strong> QuantityOnHand − QuantityReserved &lt; line.Quantity → throws "Insufficient stock for product {id}"</li>
+      <li><strong>OrderService.CreateOrder()</strong> ProductId not found in DB → throws "Unknown product: {id}"</li>
+      <li><strong>InventoryService.AdjustQuantity()</strong> QuantityOnHand + delta &lt; 0 → throws "Quantity on hand cannot be negative."</li>
+    </ul>
+
+    <h3 style="font-size:15px;font-weight:700;color:#f1f5f9;margin-top:32px;margin-bottom:6px;">State Diagram</h3>
+    <div class="diagram-box">
+      <div class="mermaid">
+stateDiagram-v2
+    [*] --> Pending : POST /api/orders\nOrderService.CreateOrder()\nValidates products, captures prices,\nsets OrderNumber ORD-yyyyMMddHHmmss
+
+    Pending --> Allocated : POST /api/orders/id/allocate\nOrderService.Allocate()\nChecks available stock per line\nIncrements QuantityReserved
+
+    Allocated --> Shipped : POST /api/orders/id/ship\nOrderService.Ship()\nDecrements OnHand + Reserved\nCreates Shipment record
+
+    Shipped --> [*]
+
+    state "Cancelled\n(model comment only\nnot implemented)" as Cancelled
+    Pending --> Cancelled : No endpoint exists
+    Allocated --> Cancelled : No endpoint exists
+      </div>
+    </div>
+
+    <h3 style="font-size:15px;font-weight:700;color:#f1f5f9;margin-top:32px;margin-bottom:6px;">Sequence Diagram — Full Fulfilment Flow</h3>
+    <div class="diagram-box">
+      <div class="mermaid">
+sequenceDiagram
+    actor Client
+    participant OC as OrdersController
+    participant OS as OrderService
+    participant DB as WmsDbContext (EF6)
+    participant SQL as SQL Server
+
+    Note over Client,SQL: Phase 1 — Create Order
+    Client->>OC: POST /api/orders
+    OC->>OS: CreateOrder(customerName, city, country, lines)
+    OS->>DB: Products.Find(productId) per line
+    DB->>SQL: SELECT Product WHERE ProductId=?
+    SQL-->>DB: Product row
+    DB-->>OS: Product with UnitPrice
+    OS->>DB: Orders.Add(order Status=Pending)
+    DB->>SQL: INSERT Order + OrderLines
+    SQL-->>DB: OK
+    OS-->>OC: Order
+    OC-->>Client: 200 OK — Status=Pending
+
+    Note over Client,SQL: Phase 2 — Allocate
+    Client->>OC: POST /api/orders/id/allocate
+    OC->>OS: Allocate(orderId)
+    OS->>DB: Warehouses.First(Code=defaultWh)
+    OS->>DB: Orders.Include(Lines).First(id)
+    DB->>SQL: SELECT Order + OrderLines
+    SQL-->>DB: Order Status=Pending
+    loop per OrderLine
+        OS->>DB: InventoryItems.First(productId+warehouseId)
+        DB->>SQL: SELECT InventoryItem
+        SQL-->>DB: InventoryItem
+        OS->>DB: item.QuantityReserved += qty
+    end
+    OS->>DB: order.Status = Allocated → SaveChanges
+    DB->>SQL: UPDATE InventoryItems + UPDATE Order
+    OS-->>OC: Order
+    OC-->>Client: 200 OK — Status=Allocated
+
+    Note over Client,SQL: Phase 3 — Ship
+    Client->>OC: POST /api/orders/id/ship
+    OC->>OS: Ship(orderId, carrier, trackingNumber)
+    OS->>DB: Orders.Include(Lines).First(id)
+    loop per OrderLine
+        OS->>DB: InventoryItems.First + Products.Find
+        OS->>DB: item.QuantityOnHand -= qty
+        OS->>DB: item.QuantityReserved -= qty
+    end
+    OS->>DB: Shipments.Add(carrier, tracking, totalWeight)
+    OS->>DB: order.Status = Shipped → SaveChanges
+    DB->>SQL: UPDATE InventoryItems + INSERT Shipment + UPDATE Order
+    OS-->>OC: Shipment
+    OC-->>Client: 200 OK — Shipment record
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════ 7. LIFECYCLE TABLE ═══════════════════════ -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">7</span>
+      <h2>Lifecycle Stage Reference</h2>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Stage</th>
+            <th>Status Value</th>
+            <th>Responsible Component</th>
+            <th>What Happens</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Creation</td>
+            <td><code class="inline">"Pending"</code></td>
+            <td><code class="inline">OrderService.CreateOrder()</code></td>
+            <td>Validates each ProductId, captures UnitPriceAtOrder, generates OrderNumber, inserts Order + OrderLines.</td>
+          </tr>
+          <tr>
+            <td>Allocation</td>
+            <td><code class="inline">"Allocated"</code></td>
+            <td><code class="inline">OrderService.Allocate()</code></td>
+            <td>Reads DefaultWarehouseCode from config, checks available qty per line, increments QuantityReserved.</td>
+          </tr>
+          <tr>
+            <td>Shipment</td>
+            <td><code class="inline">"Shipped"</code></td>
+            <td><code class="inline">OrderService.Ship()</code></td>
+            <td>Decrements QuantityOnHand and QuantityReserved, computes TotalWeightKg, inserts Shipment record.</td>
+          </tr>
+          <tr>
+            <td>Cancellation</td>
+            <td><code class="inline">"Cancelled"</code></td>
+            <td><em>Not implemented</em></td>
+            <td>Documented in Order model comment as a valid status. No service method or endpoint exists.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════ 8. KNOWN LEGACY ISSUES ═══════════════════════ -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">8</span>
+      <h2>Identified Legacy Issues &amp; Modernisation Targets</h2>
+    </div>
+    <div class="prose">
+      <p>These are the intentional legacy issues present in the codebase, identified during analysis, which make it a strong modernisation candidate for the workshop:</p>
+    </div>
+    <ul class="issue-list">
+      <li>
+        <span class="issue-label">No async/await</span>
+        <span class="issue-desc">All EF6 calls are synchronous on every request thread, blocking under load.</span>
+      </li>
+      <li>
+        <span class="issue-label">SQL Injection</span>
+        <span class="issue-desc"><code class="inline">InventoryService.SearchByProductName</code> builds a raw SQL string via string concatenation: <code class="inline">"WHERE p.Name LIKE '%" + nameFragment + "%'"</code> — no parameterisation.</span>
+      </li>
+      <li>
+        <span class="issue-label">No Dependency Injection</span>
+        <span class="issue-desc">All services and DbContext instances are created with <code class="inline">new</code> inside controllers and services — untestable and unswappable.</span>
+      </li>
+      <li>
+        <span class="issue-label">Local DateTime</span>
+        <span class="issue-desc"><code class="inline">DateTime.Now</code> used for all timestamps instead of <code class="inline">DateTime.UtcNow</code>, risking timezone inconsistencies across environments.</span>
+      </li>
+      <li>
+        <span class="issue-label">Magic-String Status</span>
+        <span class="issue-desc"><code class="inline">Order.Status</code> is a plain <code class="inline">string</code> instead of a typed enum, enabling silent typos and preventing compile-time safety.</span>
+      </li>
+      <li>
+        <span class="issue-label">Ad-hoc Config</span>
+        <span class="issue-desc">Configuration read ad-hoc inside service methods via <code class="inline">ConfigurationManager.AppSettings[…]</code> — no typed options pattern, no centralised config object.</span>
+      </li>
+      <li>
+        <span class="issue-label">Windows / IIS Coupling</span>
+        <span class="issue-desc"><code class="inline">System.Web</code>, <code class="inline">Global.asax</code>, and IIS Express coupling block cross-platform hosting on Linux/macOS and prevent containerisation.</span>
+      </li>
+    </ul>
+  </div>
+
+  <div class="footer">
+    Made with IBM Bob
+  </div>
+
+</div>
+
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'dark',
+    themeVariables: {
+      background: '#111827',
+      primaryColor: '#1e3a5f',
+      primaryTextColor: '#e2e8f0',
+      primaryBorderColor: '#3b82f6',
+      lineColor: '#475569',
+      secondaryColor: '#1e293b',
+      tertiaryColor: '#0f172a',
+      edgeLabelBackground: '#1e293b',
+      fontSize: '13px'
+    },
+    flowchart: { curve: 'basis', useMaxWidth: true },
+    sequence: { useMaxWidth: true, messageFontSize: 12, noteFontSize: 12 }
+  });
+</script>
+</body>
+</html>

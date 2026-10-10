@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Web.Http;
 using MeridianWms.Api.Models;
 using MeridianWms.Api.Services;
@@ -31,6 +32,28 @@ namespace MeridianWms.Api.Controllers
         [HttpPost, Route("")]
         public IHttpActionResult Create(CreateOrderRequest request)
         {
+            // FIX (Medium): validate required fields before processing so we return a
+            // clear 400 without touching the database or leaking internal detail.
+            if (request == null)
+            {
+                return BadRequest("Request body is required.");
+            }
+            if (string.IsNullOrWhiteSpace(request.CustomerName))
+            {
+                return BadRequest("CustomerName is required.");
+            }
+            if (request.Lines == null || request.Lines.Count == 0)
+            {
+                return BadRequest("At least one order line is required.");
+            }
+            foreach (var l in request.Lines)
+            {
+                if (l.Quantity <= 0)
+                {
+                    return BadRequest("Each order line must have a positive Quantity.");
+                }
+            }
+
             try
             {
                 var lines = new List<OrderLine>();
@@ -45,9 +68,20 @@ namespace MeridianWms.Api.Controllers
 
                 return Ok(order);
             }
+            catch (InvalidOperationException ex)
+            {
+                // FIX (High — error disclosure): return only a generic user-facing message;
+                // log the full exception server-side so it is not lost.
+                Trace.TraceError("CreateOrder failed: {0}", ex);
+                return BadRequest(ex.Message);
+            }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                // FIX (High — error disclosure): swallow unexpected exceptions so internal
+                // details (EF messages, stack traces, table/column names) are never sent to
+                // the caller. The full exception is still written to the trace log.
+                Trace.TraceError("CreateOrder unexpected error: {0}", ex);
+                return InternalServerError(new Exception("An error occurred processing the order."));
             }
         }
 
@@ -58,22 +92,52 @@ namespace MeridianWms.Api.Controllers
             {
                 return Ok(_service.Allocate(id));
             }
+            catch (InvalidOperationException ex)
+            {
+                // FIX (High — error disclosure): business-rule violations (e.g. wrong status)
+                // are safe to surface; log unexpected ones and return a generic message.
+                Trace.TraceError("Allocate({0}) failed: {1}", id, ex);
+                return BadRequest(ex.Message);
+            }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                Trace.TraceError("Allocate({0}) unexpected error: {1}", id, ex);
+                return InternalServerError(new Exception("An error occurred allocating the order."));
             }
         }
 
         [HttpPost, Route("{id:int}/ship")]
         public IHttpActionResult Ship(int id, ShipRequest request)
         {
+            // FIX (Medium): validate shipping inputs before processing.
+            if (request == null)
+            {
+                return BadRequest("Request body is required.");
+            }
+            if (string.IsNullOrWhiteSpace(request.Carrier))
+            {
+                return BadRequest("Carrier is required.");
+            }
+            if (string.IsNullOrWhiteSpace(request.TrackingNumber))
+            {
+                return BadRequest("TrackingNumber is required.");
+            }
+
             try
             {
                 return Ok(_service.Ship(id, request.Carrier, request.TrackingNumber));
             }
+            catch (InvalidOperationException ex)
+            {
+                Trace.TraceError("Ship({0}) failed: {1}", id, ex);
+                return BadRequest(ex.Message);
+            }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                // FIX (High — error disclosure): unexpected exceptions (e.g. EF / DB errors)
+                // must not leak internal details to callers.
+                Trace.TraceError("Ship({0}) unexpected error: {1}", id, ex);
+                return InternalServerError(new Exception("An error occurred shipping the order."));
             }
         }
     }

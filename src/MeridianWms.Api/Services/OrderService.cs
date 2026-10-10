@@ -9,7 +9,18 @@ namespace MeridianWms.Api.Services
 {
     public class OrderService
     {
-        private readonly WmsDbContext _db = new WmsDbContext();
+        private readonly WmsDbContext _db;
+
+        public OrderService()
+        {
+            _db = new WmsDbContext();
+        }
+
+        // Constructor used by unit tests to inject an in-memory context.
+        internal OrderService(WmsDbContext db)
+        {
+            _db = db;
+        }
 
         public Order GetById(int orderId)
         {
@@ -20,7 +31,9 @@ namespace MeridianWms.Api.Services
 
         public List<Order> GetAll()
         {
-            return _db.Orders.OrderByDescending(o => o.CreatedUtc).ToList();
+            // FIX (Medium): limit result set to prevent full-table scans being returned
+            // to callers in a warehouse with a large order history (DoS / over-fetch).
+            return _db.Orders.OrderByDescending(o => o.CreatedUtc).Take(500).ToList();
         }
 
         // Creates a new order in "Pending" status. Order number is generated
@@ -44,7 +57,11 @@ namespace MeridianWms.Api.Services
                 var product = _db.Products.Find(line.ProductId);
                 if (product == null)
                 {
-                    throw new Exception("Unknown product: " + line.ProductId);
+                    // FIX (Medium — error disclosure): use InvalidOperationException (a
+                    // business-rule type) so the controller can distinguish it from
+                    // unexpected infrastructure errors and decide whether to surface it.
+                    // ProductId is an internal int — safe to include in a business message.
+                    throw new InvalidOperationException("Unknown product: " + line.ProductId);
                 }
 
                 order.Lines.Add(new OrderLine
@@ -70,7 +87,9 @@ namespace MeridianWms.Api.Services
             var order = _db.Orders.Include("Lines").First(o => o.OrderId == orderId);
             if (order.Status != "Pending")
             {
-                throw new Exception("Only Pending orders can be allocated.");
+                // FIX (Medium — error disclosure): use InvalidOperationException so the
+                // controller can safely surface this business-rule message to callers.
+                throw new InvalidOperationException("Only Pending orders can be allocated.");
             }
 
             foreach (var line in order.Lines)
@@ -81,7 +100,9 @@ namespace MeridianWms.Api.Services
                 int available = item.QuantityOnHand - item.QuantityReserved;
                 if (available < line.Quantity)
                 {
-                    throw new Exception("Insufficient stock for product " + line.ProductId);
+                    // FIX (Medium — error disclosure): InvalidOperationException marks this
+                    // as a safe business message; ProductId is an internal key, not PII.
+                    throw new InvalidOperationException("Insufficient stock for product " + line.ProductId);
                 }
 
                 item.QuantityReserved = item.QuantityReserved + line.Quantity;
@@ -102,7 +123,8 @@ namespace MeridianWms.Api.Services
             var order = _db.Orders.Include("Lines").First(o => o.OrderId == orderId);
             if (order.Status != "Allocated")
             {
-                throw new Exception("Only Allocated orders can be shipped.");
+                // FIX (Medium — error disclosure): use InvalidOperationException.
+                throw new InvalidOperationException("Only Allocated orders can be shipped.");
             }
 
             decimal totalWeight = 0;

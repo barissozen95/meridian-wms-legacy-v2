@@ -1,5 +1,8 @@
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+
+[assembly: InternalsVisibleTo("MeridianWms.Tests")]
 
 [assembly: AssemblyTitle("MeridianWms.Api")]
 [assembly: AssemblyDescription("Meridian Logistics Warehouse Management System - Web API")]

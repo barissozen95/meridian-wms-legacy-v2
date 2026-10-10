@@ -1,3 +1,4 @@
+using System.Data.Common;
 using System.Data.Entity;
 using System.Data.Entity.ModelConfiguration.Conventions;
 using MeridianWms.Api.Models;
@@ -8,6 +9,14 @@ namespace MeridianWms.Api.Data
     {
         // Uses the "WmsDb" connection string from Web.config.
         public WmsDbContext() : base("name=WmsDb")
+        {
+            Configuration.LazyLoadingEnabled = false;
+            Configuration.ProxyCreationEnabled = false;
+        }
+
+        // Constructor used by unit tests to inject an in-memory (Effort) connection.
+        internal WmsDbContext(DbConnection connection, bool contextOwnsConnection)
+            : base(connection, contextOwnsConnection)
         {
             Configuration.LazyLoadingEnabled = false;
             Configuration.ProxyCreationEnabled = false;

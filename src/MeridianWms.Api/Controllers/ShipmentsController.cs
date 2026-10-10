@@ -12,7 +12,9 @@ namespace MeridianWms.Api.Controllers
         [HttpGet, Route("")]
         public IHttpActionResult GetAll()
         {
-            return Ok(_db.Shipments.OrderByDescending(s => s.ShippedUtc).ToList());
+            // FIX (Medium): limit result set to prevent full-table scans from being
+            // returned to callers, which could exhaust server memory or bandwidth.
+            return Ok(_db.Shipments.OrderByDescending(s => s.ShippedUtc).Take(500).ToList());
         }
 
         [HttpGet, Route("order/{orderId:int}")]
