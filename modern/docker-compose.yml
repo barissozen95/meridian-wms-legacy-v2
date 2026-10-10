@@ -1,0 +1,14 @@
+# Local PostgreSQL for running the modern API (tests use Testcontainers instead).
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: meridian_wms
+      POSTGRES_USER: wms
+      POSTGRES_PASSWORD: wms_dev_only
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U wms -d meridian_wms"]
+      interval: 2s
+      retries: 30

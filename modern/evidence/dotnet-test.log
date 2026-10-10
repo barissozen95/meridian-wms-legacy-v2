@@ -1,0 +1,228 @@
+﻿  Determining projects to restore...
+  All projects are up-to-date for restore.
+  MeridianWms.Web -> C:\Users\Administrator.BOBATHON-WIN\Desktop\bobathon prep\meridian-wms-legacy-v2\modern\src\MeridianWms.Web\bin\Debug\net10.0\MeridianWms.Web.dll
+  MeridianWms.Web.Tests -> C:\Users\Administrator.BOBATHON-WIN\Desktop\bobathon prep\meridian-wms-legacy-v2\modern\tests\MeridianWms.Web.Tests\bin\Debug\net10.0\MeridianWms.Web.Tests.dll
+Test run for C:\Users\Administrator.BOBATHON-WIN\Desktop\bobathon prep\meridian-wms-legacy-v2\modern\tests\MeridianWms.Web.Tests\bin\Debug\net10.0\MeridianWms.Web.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)
+[xUnit.net 00:00:00.63]   Discovering: MeridianWms.Web.Tests
+[xUnit.net 00:00:00.79]   Discovered:  MeridianWms.Web.Tests
+[xUnit.net 00:00:00.88]   Starting:    MeridianWms.Web.Tests
+[testcontainers.org 00:00:00.71] Connected to Docker:
+  Host: npipe://./pipe/docker_engine
+  Server Version: 29.8.2
+  Kernel Version: 6.18.40.1-microsoft-standard-WSL2
+  API Version: 1.56
+  Operating System: Docker Desktop (containerized)
+  Total Memory: 7.76 GB
+  Labels: 
+    com.docker.desktop.address=npipe://\\.\pipe\docker_cli
+[testcontainers.org 00:00:01.06] Searching Docker registry credential in Auths
+[testcontainers.org 00:00:01.06] Searching Docker registry credential in CredHelpers
+[testcontainers.org 00:00:01.06] Searching Docker registry credential in CredsStore
+[testcontainers.org 00:00:01.07] Searching Docker registry credential in Auths
+[testcontainers.org 00:00:01.50] Docker registry credential https://index.docker.io/v1/ not found
+[testcontainers.org 00:00:05.11] Docker image testcontainers/ryuk:0.14.0@sha256:7c1a8a9a47c780ed0f983770a662f80deb115d95cce3e2daa3d12115b8cd28f0 created
+[testcontainers.org 00:00:05.87] Docker container 98cce5fa1c0b created
+[testcontainers.org 00:00:06.16] Start Docker container 98cce5fa1c0b
+[testcontainers.org 00:00:07.91] Wait for Docker container 98cce5fa1c0b to complete readiness checks
+[testcontainers.org 00:00:08.33] Docker container 98cce5fa1c0b ready
+[testcontainers.org 00:01:48.71] Docker image postgres:17-alpine created
+[testcontainers.org 00:01:54.70] Docker container 9a6dd1cb7420 created
+[testcontainers.org 00:01:54.79] Start Docker container 9a6dd1cb7420
+[testcontainers.org 00:01:55.83] Wait for Docker container 9a6dd1cb7420 to complete readiness checks
+[testcontainers.org 00:01:55.99] Execute "pg_isready --host localhost --dbname postgres --username postgres" at Docker container 9a6dd1cb7420
+[testcontainers.org 00:01:57.83] Execute "pg_isready --host localhost --dbname postgres --username postgres" at Docker container 9a6dd1cb7420
+[testcontainers.org 00:01:59.50] Execute "pg_isready --host localhost --dbname postgres --username postgres" at Docker container 9a6dd1cb7420
+[testcontainers.org 00:02:00.86] Execute "pg_isready --host localhost --dbname postgres --username postgres" at Docker container 9a6dd1cb7420
+[testcontainers.org 00:02:02.29] Execute "pg_isready --host localhost --dbname postgres --username postgres" at Docker container 9a6dd1cb7420
+[testcontainers.org 00:02:02.64] Docker container 9a6dd1cb7420 ready
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Testing
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: C:\Users\Administrator.BOBATHON-WIN\Desktop\bobathon prep\meridian-wms-legacy-v2\modern\src\MeridianWms.Web
+fail: Microsoft.EntityFrameworkCore.Database.Command[20102]
+      Failed executing DbCommand (49ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "MigrationId", "ProductVersion"
+      FROM "__EFMigrationsHistory"
+      ORDER BY "MigrationId";
+info: Microsoft.EntityFrameworkCore.Migrations[20402]
+      Applying migration '20261010154553_InitialPostgres'.
+fail: Microsoft.EntityFrameworkCore.Database.Command[20102]
+      Failed executing DbCommand (5ms) [Parameters=[@p0='?', @p1='?', @p2='?', @p3='?' (DbType = Decimal), @p4='?' (DbType = Decimal)], CommandType='Text', CommandTimeout='30']
+      INSERT INTO "Product" ("Category", "Name", "Sku", "UnitPrice", "UnitWeightKg")
+      VALUES (@p0, @p1, @p2, @p3, @p4)
+      RETURNING "ProductId", "IsActive";
+fail: Microsoft.EntityFrameworkCore.Update[10000]
+      An exception occurred in the database while saving changes for context type 'MeridianWms.Web.Data.WmsDbContext'.
+      Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while saving the entity changes. See the inner exception for details.
+       ---> Npgsql.PostgresException (0x80004005): 23505: duplicate key value violates unique constraint "UX_Product_Sku"
+      DETAIL: Detail redacted as it may contain sensitive data. Specify 'Include Error Detail' in the connection string to include this information.
+         at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)
+         at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+         at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+         at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+         at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+         at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+         at Npgsql.NpgsqlCommand.ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)
+         at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+         at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+         at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+        Exception data:
+          Severity: ERROR
+          SqlState: 23505
+          MessageText: duplicate key value violates unique constraint "UX_Product_Sku"
+          Detail: Detail redacted as it may contain sensitive data. Specify 'Include Error Detail' in the connection string to include this information.
+          SchemaName: public
+          TableName: Product
+          ConstraintName: UX_Product_Sku
+          File: nbtinsert.c
+          Line: 666
+          Routine: _bt_check_unique
+         --- End of inner exception stack trace ---
+         at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+         at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+         at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+         at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+         at Microsoft.EntityFrameworkCore.Storage.RelationalDatabase.SaveChangesAsync(IList`1 entries, CancellationToken cancellationToken)
+         at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)
+         at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+         at Npgsql.EntityFrameworkCore.PostgreSQL.Storage.Internal.NpgsqlExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+         at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+      Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while saving the entity changes. See the inner exception for details.
+       ---> Npgsql.PostgresException (0x80004005): 23505: duplicate key value violates unique constraint "UX_Product_Sku"
+      DETAIL: Detail redacted as it may contain sensitive data. Specify 'Include Error Detail' in the connection string to include this information.
+         at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)
+         at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+         at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+         at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+         at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+         at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+         at Npgsql.NpgsqlCommand.ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)
+         at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+         at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+         at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+        Exception data:
+          Severity: ERROR
+          SqlState: 23505
+          MessageText: duplicate key value violates unique constraint "UX_Product_Sku"
+          Detail: Detail redacted as it may contain sensitive data. Specify 'Include Error Detail' in the connection string to include this information.
+          SchemaName: public
+          TableName: Product
+          ConstraintName: UX_Product_Sku
+          File: nbtinsert.c
+          Line: 666
+          Routine: _bt_check_unique
+         --- End of inner exception stack trace ---
+         at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+         at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+         at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+         at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+         at Microsoft.EntityFrameworkCore.Storage.RelationalDatabase.SaveChangesAsync(IList`1 entries, CancellationToken cancellationToken)
+         at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)
+         at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+         at Npgsql.EntityFrameworkCore.PostgreSQL.Storage.Internal.NpgsqlExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+         at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+info: MeridianWms.Web.Infrastructure.ApiExceptionHandler[0]
+      Duplicate: A record with the same unique key already exists.
+  Passed MeridianWms.Web.Tests.ProductsApiTests.Create_PersistsActiveProduct_WithNextIdentity [835 ms]
+  Passed MeridianWms.Web.Tests.ProductsApiTests.Create_MissingName_Returns400 [45 ms]
+  Passed MeridianWms.Web.Tests.ProductsApiTests.Create_DuplicateSku_Returns409_FromUniqueIndex [144 ms]
+  Passed MeridianWms.Web.Tests.ProductsApiTests.GetById_Unknown_Returns404 [947 ms]
+  Passed MeridianWms.Web.Tests.ProductsApiTests.GetAll_ReturnsActiveProducts_InLegacyPascalCaseShape [112 ms]
+  Passed MeridianWms.Web.Tests.ProductsApiTests.GetAll_ExcludesInactiveProducts [100 ms]
+info: MeridianWms.Web.Infrastructure.ApiExceptionHandler[0]
+      Not found: Order 999 not found.
+  Passed MeridianWms.Web.Tests.OrdersApiTests.Shipments_GetAll_ReturnsNewestFirst [725 ms]
+  Passed MeridianWms.Web.Tests.OrdersApiTests.Allocate_UnknownOrder_Returns404 [24 ms]
+info: MeridianWms.Web.Infrastructure.ApiExceptionHandler[0]
+      Business rule violation: Only Allocated orders can be shipped.
+  Passed MeridianWms.Web.Tests.OrdersApiTests.FullLifecycle_PendingAllocatedShipped_KeepsStockConsistent [542 ms]
+  Passed MeridianWms.Web.Tests.OrdersApiTests.Create_InvalidRequest_Returns400_AndWritesNothing(body: "{\"CustomerName\":\"A\",\"Lines\":[{\"ProductId\":"┬╖┬╖┬╖) [26 ms]
+  Passed MeridianWms.Web.Tests.OrdersApiTests.Create_InvalidRequest_Returns400_AndWritesNothing(body: "{\"Lines\":[{\"ProductId\":1,\"Quantity\":1}]}") [21 ms]
+  Passed MeridianWms.Web.Tests.OrdersApiTests.Create_InvalidRequest_Returns400_AndWritesNothing(body: "{\"CustomerName\":\"A\",\"Lines\":[]}") [25 ms]
+  Passed MeridianWms.Web.Tests.OrdersApiTests.Create_InvalidRequest_Returns400_AndWritesNothing(body: "{\"CustomerName\":\"A\"}") [10 ms]
+  Passed MeridianWms.Web.Tests.OrdersApiTests.Create_InvalidRequest_Returns400_AndWritesNothing(body: "{\"CustomerName\":\"A\",\"Lines\":[{\"ProductId\":"┬╖┬╖┬╖) [27 ms]
+  Passed MeridianWms.Web.Tests.OrdersApiTests.Create_InvalidRequest_Returns400_AndWritesNothing(body: "{\"CustomerName\":\"\",\"Lines\":[{\"ProductId\":1"┬╖┬╖┬╖) [11 ms]
+  Passed MeridianWms.Web.Tests.OrdersApiTests.Allocate_ExactAvailableStock_Succeeds [189 ms]
+info: MeridianWms.Web.Infrastructure.ApiExceptionHandler[0]
+      Business rule violation: Insufficient stock for product 4
+info: MeridianWms.Web.Infrastructure.ApiExceptionHandler[0]
+      Business rule violation: Product 5 is not stocked in warehouse WH-CENTRAL.
+  Passed MeridianWms.Web.Tests.OrdersApiTests.GetById_IncludesLines_UnknownIs404 [97 ms]
+  Passed MeridianWms.Web.Tests.OrdersApiTests.Allocate_ReservesStock_WithoutTouchingOnHand [65 ms]
+  Passed MeridianWms.Web.Tests.OrdersApiTests.Ship_InvalidRequest_Returns400(body: "{\"Carrier\":\"\",\"TrackingNumber\":\"T\"}") [175 ms]
+  Passed MeridianWms.Web.Tests.OrdersApiTests.Ship_InvalidRequest_Returns400(body: "{\"Carrier\":\"DHL\"}") [67 ms]
+  Passed MeridianWms.Web.Tests.OrdersApiTests.Allocate_ConcurrentRequestsForSameStock_NeverOversell [414 ms]
+  Passed MeridianWms.Web.Tests.OrdersApiTests.Allocate_ProductNotInDefaultWarehouse_Returns400 [147 ms]
+info: MeridianWms.Web.Infrastructure.ApiExceptionHandler[0]
+      Business rule violation: Unknown product: 999
+info: MeridianWms.Web.Infrastructure.ApiExceptionHandler[0]
+      Business rule violation: Insufficient stock for product 3
+info: MeridianWms.Web.Infrastructure.ApiExceptionHandler[0]
+      Business rule violation: Only Allocated orders can be shipped.
+info: MeridianWms.Web.Infrastructure.ApiExceptionHandler[0]
+      Business rule violation: Only Pending orders can be allocated.
+  Passed MeridianWms.Web.Tests.OrdersApiTests.Create_ManyInSameSecond_GetsUniqueOrderNumbers [377 ms]
+  Passed MeridianWms.Web.Tests.OrdersApiTests.Create_IsPending_SnapshotsPrice_UsesUtc [77 ms]
+  Passed MeridianWms.Web.Tests.OrdersApiTests.Create_UnknownProduct_Returns400 [25 ms]
+  Passed MeridianWms.Web.Tests.OrdersApiTests.Allocate_MultiLineOversell_IsAllOrNothing [127 ms]
+  Passed MeridianWms.Web.Tests.OrdersApiTests.Ship_PendingOrder_Returns400 [27 ms]
+  Passed MeridianWms.Web.Tests.OrdersApiTests.Allocate_Twice_Returns400 [145 ms]
+  Passed MeridianWms.Web.Tests.OrdersApiTests.GetAll_OrdersByCreatedUtcDescending_WithStringStatus [46 ms]
+info: MeridianWms.Web.Infrastructure.ApiExceptionHandler[0]
+      Business rule violation: Quantity on hand cannot be negative.
+info: MeridianWms.Web.Infrastructure.ApiExceptionHandler[0]
+      Not found: No inventory for product 1 in warehouse WH-NOPE.
+  Passed MeridianWms.Web.Tests.InventoryApiTests.Search_MatchesNameFragment_CaseInsensitive(name: "VALVE", expected: 2) [83 ms]
+  Passed MeridianWms.Web.Tests.InventoryApiTests.Search_MatchesNameFragment_CaseInsensitive(name: "zzz", expected: 0) [41 ms]
+  Passed MeridianWms.Web.Tests.InventoryApiTests.Search_MatchesNameFragment_CaseInsensitive(name: "bearing", expected: 1) [56 ms]
+  Passed MeridianWms.Web.Tests.InventoryApiTests.Search_MatchesNameFragment_CaseInsensitive(name: "pump", expected: 2) [48 ms]
+  Passed MeridianWms.Web.Tests.InventoryApiTests.Adjust_PositiveAndNegativeDeltas_Persist [143 ms]
+  Passed MeridianWms.Web.Tests.InventoryApiTests.Search_SqlInjectionPayload_IsTreatedAsLiteral(payload: "' OR '1'='1") [42 ms]
+  Passed MeridianWms.Web.Tests.InventoryApiTests.Search_SqlInjectionPayload_IsTreatedAsLiteral(payload: "%'; DROP TABLE \"Product\"; --") [71 ms]
+  Passed MeridianWms.Web.Tests.InventoryApiTests.Adjust_BelowZero_Returns400_AndDoesNotPersist [55 ms]
+  Passed MeridianWms.Web.Tests.InventoryApiTests.Adjust_UnknownProductOrWarehouse_Returns404(query: "productId=1&warehouseCode=WH-NOPE&delta=1") [25 ms]
+info: MeridianWms.Web.Infrastructure.ApiExceptionHandler[0]
+      Not found: No inventory for product 3 in warehouse WH-WEST.
+  Passed MeridianWms.Web.Tests.InventoryApiTests.Adjust_UnknownProductOrWarehouse_Returns404(query: "productId=3&warehouseCode=WH-WEST&delta=1") [55 ms]
+  Passed MeridianWms.Web.Tests.InventoryApiTests.LowStock_UsesAtOrBelowThreshold_AcrossWarehouses [52 ms]
+  Passed MeridianWms.Web.Tests.InventoryApiTests.Search_EmptyName_ReturnsEmpty [6 ms]
+  Passed MeridianWms.Web.Tests.InventoryApiTests.GetForWarehouse_ReturnsOnlyThatWarehouse [60 ms]
+  Passed MeridianWms.Web.Tests.InventoryApiTests.LowStock_ConsidersReservedQuantity [38 ms]
+  Passed MeridianWms.Web.Tests.InventoryApiTests.GetForWarehouse_UnknownCode_ReturnsEmpty [13 ms]
+  Passed MeridianWms.Web.Tests.InventoryApiTests.Search_ReturnsLegacyRowShape [27 ms]
+  Passed MeridianWms.Web.Tests.DatabaseSchemaTests.Migration_IsRecordedInHistory [49 ms]
+  Passed MeridianWms.Web.Tests.DatabaseSchemaTests.Column_HasLegacyCompatibleType(table: "Order", column: "Status", expected: "character varying(20)") [69 ms]
+  Passed MeridianWms.Web.Tests.DatabaseSchemaTests.Column_HasLegacyCompatibleType(table: "Product", column: "UnitWeightKg", expected: "numeric(10,3)") [66 ms]
+  Passed MeridianWms.Web.Tests.DatabaseSchemaTests.Column_HasLegacyCompatibleType(table: "Order", column: "CreatedUtc", expected: "timestamp with time zone") [56 ms]
+  Passed MeridianWms.Web.Tests.DatabaseSchemaTests.Column_HasLegacyCompatibleType(table: "Shipment", column: "TotalWeightKg", expected: "numeric(10,3)") [60 ms]
+  Passed MeridianWms.Web.Tests.DatabaseSchemaTests.Column_HasLegacyCompatibleType(table: "OrderLine", column: "UnitPriceAtOrder", expected: "numeric(12,2)") [36 ms]
+  Passed MeridianWms.Web.Tests.DatabaseSchemaTests.Column_HasLegacyCompatibleType(table: "Product", column: "IsActive", expected: "boolean") [12 ms]
+  Passed MeridianWms.Web.Tests.DatabaseSchemaTests.Column_HasLegacyCompatibleType(table: "Product", column: "UnitPrice", expected: "numeric(12,2)") [38 ms]
+  Passed MeridianWms.Web.Tests.DatabaseSchemaTests.Column_HasLegacyCompatibleType(table: "Product", column: "Sku", expected: "character varying(40)") [39 ms]
+  Passed MeridianWms.Web.Tests.DatabaseSchemaTests.Column_HasLegacyCompatibleType(table: "Shipment", column: "ShippedUtc", expected: "timestamp with time zone") [43 ms]
+  Passed MeridianWms.Web.Tests.DatabaseSchemaTests.HardeningConstraint_IsValidated(name: "CK_Order_Status_Known") [28 ms]
+  Passed MeridianWms.Web.Tests.DatabaseSchemaTests.HardeningConstraint_IsValidated(name: "FK_Shipment_Order_OrderId") [12 ms]
+  Passed MeridianWms.Web.Tests.DatabaseSchemaTests.HardeningConstraint_IsValidated(name: "CK_InventoryItem_OnHand_NonNegative") [14 ms]
+  Passed MeridianWms.Web.Tests.DatabaseSchemaTests.HardeningConstraint_IsValidated(name: "CK_OrderLine_Quantity_Positive") [15 ms]
+  Passed MeridianWms.Web.Tests.DatabaseSchemaTests.HardeningIndex_Exists(index: "UX_Product_Sku") [36 ms]
+info: Microsoft.Hosting.Lifetime[0]
+      Application is shutting down...
+[testcontainers.org 00:02:22.20] Delete Docker container 9a6dd1cb7420
+  Passed MeridianWms.Web.Tests.DatabaseSchemaTests.HardeningIndex_Exists(index: "UX_Order_OrderNumber") [30 ms]
+  Passed MeridianWms.Web.Tests.DatabaseSchemaTests.HardeningIndex_Exists(index: "UX_Warehouse_Code") [49 ms]
+  Passed MeridianWms.Web.Tests.DatabaseSchemaTests.HardeningIndex_Exists(index: "IX_Product_Name_trgm") [156 ms]
+  Passed MeridianWms.Web.Tests.DatabaseSchemaTests.HardeningIndex_Exists(index: "UX_InventoryItem_Prod_Wh") [48 ms]
+  Passed MeridianWms.Web.Tests.DatabaseSchemaTests.Health_ReportsDatabaseReachable [36 ms]
+  Passed MeridianWms.Web.Tests.DatabaseSchemaTests.Seed_MatchesLegacyRowCounts [24 ms]
+  Passed MeridianWms.Web.Tests.DatabaseSchemaTests.NoForeignKey_CascadesDeletes [22 ms]
+[xUnit.net 00:02:47.89]   Finished:    MeridianWms.Web.Tests
+Results File: C:\Users\Administrator.BOBATHON-WIN\Desktop\bobathon prep\meridian-wms-legacy-v2\modern\evidence\test-results.trx
+
+Test Run Successful.
+Total tests: 67
+     Passed: 67
+ Total time: 2.8368 Minutes

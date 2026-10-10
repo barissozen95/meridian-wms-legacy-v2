@@ -1,0 +1,135 @@
+﻿== Applied EF Core migrations
+          MigrationId           | ProductVersion 
+--------------------------------+----------------
+ 20261010154553_InitialPostgres | 10.0.12
+(1 row)
+
+== Tables
+               List of relations
+ Schema |         Name          | Type  | Owner 
+--------+-----------------------+-------+-------
+ public | InventoryItem         | table | wms
+ public | Order                 | table | wms
+ public | OrderLine             | table | wms
+ public | Product               | table | wms
+ public | Shipment              | table | wms
+ public | Warehouse             | table | wms
+ public | __EFMigrationsHistory | table | wms
+(7 rows)
+
+== Column types (legacy contract)
+  table_name   |    column_name     |        data_type         | size | is_nullable 
+---------------+--------------------+--------------------------+------+-------------
+ InventoryItem | InventoryItemId    | integer                  | 32,0 | NO
+ InventoryItem | ProductId          | integer                  | 32,0 | NO
+ InventoryItem | WarehouseId        | integer                  | 32,0 | NO
+ InventoryItem | QuantityOnHand     | integer                  | 32,0 | NO
+ InventoryItem | QuantityReserved   | integer                  | 32,0 | NO
+ InventoryItem | BinLocation        | character varying        | 40   | YES
+ Order         | OrderId            | integer                  | 32,0 | NO
+ Order         | OrderNumber        | character varying        | 40   | NO
+ Order         | CustomerName       | character varying        | 200  | NO
+ Order         | DestinationCity    | character varying        | 100  | YES
+ Order         | DestinationCountry | character varying        | 100  | YES
+ Order         | Status             | character varying        | 20   | NO
+ Order         | CreatedUtc         | timestamp with time zone |      | NO
+ OrderLine     | OrderLineId        | integer                  | 32,0 | NO
+ OrderLine     | OrderId            | integer                  | 32,0 | NO
+ OrderLine     | ProductId          | integer                  | 32,0 | NO
+ OrderLine     | Quantity           | integer                  | 32,0 | NO
+ OrderLine     | UnitPriceAtOrder   | numeric                  | 12,2 | NO
+ Product       | ProductId          | integer                  | 32,0 | NO
+ Product       | Sku                | character varying        | 40   | NO
+ Product       | Name               | character varying        | 200  | NO
+ Product       | Category           | character varying        | 100  | YES
+ Product       | UnitWeightKg       | numeric                  | 10,3 | NO
+ Product       | UnitPrice          | numeric                  | 12,2 | NO
+ Product       | IsActive           | boolean                  |      | NO
+ Shipment      | ShipmentId         | integer                  | 32,0 | NO
+ Shipment      | OrderId            | integer                  | 32,0 | NO
+ Shipment      | Carrier            | character varying        | 100  | YES
+ Shipment      | TrackingNumber     | character varying        | 100  | YES
+ Shipment      | FromWarehouseCode  | character varying        | 20   | YES
+ Shipment      | ShippedUtc         | timestamp with time zone |      | NO
+ Shipment      | TotalWeightKg      | numeric                  | 10,3 | NO
+ Warehouse     | WarehouseId        | integer                  | 32,0 | NO
+ Warehouse     | Code               | character varying        | 20   | NO
+ Warehouse     | Name               | character varying        | 200  | NO
+ Warehouse     | City               | character varying        | 100  | YES
+ Warehouse     | Country            | character varying        | 100  | YES
+(37 rows)
+
+== Constraints (FK / CHECK / validated, delete action)
+      table      |                conname                 | contype | convalidated | on_delete 
+-----------------+----------------------------------------+---------+--------------+-----------
+ "Order"         | CK_Order_Status_Known                  | c       | t            | 
+ "Shipment"      | FK_Shipment_Order_OrderId              | f       | t            | RESTRICT
+ "OrderLine"     | CK_OrderLine_Quantity_Positive         | c       | t            | 
+ "OrderLine"     | FK_OrderLine_Order_OrderId             | f       | t            | NO ACTION
+ "OrderLine"     | FK_OrderLine_Product_ProductId         | f       | t            | NO ACTION
+ "InventoryItem" | CK_InventoryItem_OnHand_NonNegative    | c       | t            | 
+ "InventoryItem" | FK_InventoryItem_Product_ProductId     | f       | t            | NO ACTION
+ "InventoryItem" | FK_InventoryItem_Warehouse_WarehouseId | f       | t            | NO ACTION
+(8 rows)
+
+== Indexes
+       tablename       |          indexname           
+-----------------------+------------------------------
+ InventoryItem         | IX_InventoryItem_ProductId
+ InventoryItem         | IX_InventoryItem_WarehouseId
+ InventoryItem         | PK_InventoryItem
+ InventoryItem         | UX_InventoryItem_Prod_Wh
+ Order                 | IX_Order_CreatedUtc_Desc
+ Order                 | PK_Order
+ Order                 | UX_Order_OrderNumber
+ OrderLine             | IX_OrderLine_OrderId
+ OrderLine             | IX_OrderLine_ProductId
+ OrderLine             | PK_OrderLine
+ Product               | IX_Product_Name_trgm
+ Product               | PK_Product
+ Product               | UX_Product_Sku
+ Shipment              | IX_Shipment_OrderId
+ Shipment              | IX_Shipment_ShippedUtc
+ Shipment              | PK_Shipment
+ Warehouse             | PK_Warehouse
+ Warehouse             | UX_Warehouse_Code
+ __EFMigrationsHistory | PK___EFMigrationsHistory
+(19 rows)
+
+== Row counts
+       t       | count 
+---------------+-------
+ Warehouse     |     2
+ Product       |     6
+ InventoryItem |     7
+ Order         |     3
+ OrderLine     |     5
+ Shipment      |     2
+(6 rows)
+
+== Inventory
+ InventoryItemId |    Sku     |    Code    | QuantityOnHand | QuantityReserved | BinLocation 
+-----------------+------------+------------+----------------+------------------+-------------
+               1 | PMP-3000-A | WH-CENTRAL |             27 |                0 | A-01-1
+               2 | VLV-12-SS  | WH-CENTRAL |            470 |                0 | B-04-2
+               3 | BRG-6204   | WH-CENTRAL |              6 |                0 | C-09-3
+               4 | MTR-7K5    | WH-CENTRAL |             12 |                0 | A-02-1
+               5 | FLT-AIR-M  | WH-CENTRAL |              8 |                0 | D-11-4
+               6 | PMP-3000-A | WH-WEST    |             10 |                0 | A-01-1
+               7 | VLV-12-SS  | WH-WEST    |            200 |                0 | B-02-1
+(7 rows)
+
+== Orders / shipments
+ OrderId |        OrderNumber        | Status  |          CreatedUtc           
+---------+---------------------------+---------+-------------------------------
+       1 | ORD-20240115093000        | Shipped | 2024-01-15 09:30:00+00
+       2 | ORD-20240220141500        | Pending | 2024-02-20 14:15:00+00
+       3 | ORD-20261010163232-000001 | Shipped | 2026-10-10 16:32:32.633165+00
+(3 rows)
+
+ ShipmentId | OrderId |   Carrier   | TrackingNumber | FromWarehouseCode | TotalWeightKg |          ShippedUtc          
+------------+---------+-------------+----------------+-------------------+---------------+------------------------------
+          1 |       1 | DHL Freight | 1Z-EXAMPLE-001 | WH-CENTRAL        |        48.500 | 2024-01-16 08:00:00+00
+          2 |       3 | DHL Freight | TRK-SMOKE-1    | WH-CENTRAL        |        63.000 | 2026-10-10 16:32:33.20176+00
+(2 rows)
+

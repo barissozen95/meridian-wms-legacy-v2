@@ -1,0 +1,121 @@
+﻿### seed-dev.sql
+INSERT 0 2
+INSERT 0 5
+INSERT 0 7
+INSERT 0 2
+INSERT 0 3
+INSERT 0 1
+ setval 
+--------
+      2
+(1 row)
+
+ setval 
+--------
+      5
+(1 row)
+
+ setval 
+--------
+      7
+(1 row)
+
+ setval 
+--------
+      2
+(1 row)
+
+ setval 
+--------
+      3
+(1 row)
+
+ setval 
+--------
+      1
+(1 row)
+
+### post-load-hardening.sql
+ issue | value | count 
+-------+-------+-------
+(0 rows)
+
+ issue | value | count 
+-------+-------+-------
+(0 rows)
+
+ issue | value | count 
+-------+-------+-------
+(0 rows)
+
+ issue | ProductId | WarehouseId | count 
+-------+-----------+-------------+-------
+(0 rows)
+
+ issue | ShipmentId 
+-------+------------
+(0 rows)
+
+ issue | InventoryItemId 
+-------+-----------------
+(0 rows)
+
+ issue | InventoryItemId 
+-------+-----------------
+(0 rows)
+
+ issue | OrderLineId 
+-------+-------------
+(0 rows)
+
+ issue | OrderId | Status 
+-------+---------+--------
+(0 rows)
+
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+DO
+ALTER TABLE
+CREATE INDEX
+DO
+DO
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+CREATE INDEX
+CREATE INDEX
+CREATE EXTENSION
+CREATE INDEX
+ setval 
+--------
+      5
+(1 row)
+
+ setval 
+--------
+      2
+(1 row)
+
+ setval 
+--------
+      7
+(1 row)
+
+ setval 
+--------
+      2
+(1 row)
+
+ setval 
+--------
+      3
+(1 row)
+
+ setval 
+--------
+      1
+(1 row)
+
+ANALYZE
